@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <cstdlib> 
 #include "ship.h" 
 
 using namespace std;

@@ -3,10 +3,12 @@
 
 using namespace std;
 
-class battleshipGame //: public boardGame inherentance from boardgame.
+class battleshipGame 
 {   
 friend istream& operator>>(istream&, battleshipGame&);// overloaded operator
+friend istream& getline(istream&, battleshipGame&);
 friend ostream& operator<<(ostream&, const battleshipGame&);//overloaded operator
+
 
 public:
 battleshipGame();//contructor
@@ -18,6 +20,7 @@ void theConsole();// shows the ammo available and hits accomplished
 void thelist();//linkedlist... adds each coordinate entered and whether hit or miss..
 int hits;// number of hits user has accomplished
 int ammo;//number of ammo or retrys user has remaining.
+int hity;
 
 private:
 board theBoard;//composition the board.

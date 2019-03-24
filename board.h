@@ -6,6 +6,8 @@ class board
 {
 friend ostream& operator<<(ostream&, const board&);
 friend istream& operator>>(istream&, board&);
+friend istream& getline(istream&, board&);
+
 
 public:
 board();
@@ -21,12 +23,15 @@ void checkhit(char,int);//checks whether the user entered coordinates are a hit 
 void theConsole();// the ammo and hits
 void dolinkedlist();// after every use input, it adds the coordinates to linked list, plus either hit or miss
 void printlinkedlist();// prints linkedlist
+bool checklinkedlist();
 void setfirst();//set the first pointer for linked list
 void setlast();// set the last pointer for linked list
 void setmunitions();// sets ammo/hs to their respective numbers. s when user wants to play again, these variables go back to beginning
+void setCoords(char, int);
 int returnhits();//return hit. to battleshipgame hitunction
 int returnammo();//return ammot.. to battleshipgame ammo function
 int returnmiss();//either miss or hit... 1  or 2, for linkiedlist purposes
+int returnhity();
 
 struct nodeType// linked list struct
 {
@@ -46,6 +51,7 @@ char **temp;// the array with the ships on the baord game... user will not see.
 int ammo;
 int hit;
 int miss;
+string hitstr;
 char hitx;//user input x coordinate
 int hity;// user input y coordinate
 nodeType *first;//pointeror linked list

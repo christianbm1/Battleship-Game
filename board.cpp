@@ -2,6 +2,9 @@
 #include <iomanip>
 #include <cctype>
 #include <string>
+#include <unistd.h>
+#include <cstdlib> 
+#include <sstream> 
 #include "battleshipgame.h"
 
 
@@ -11,6 +14,8 @@ board::board()
 {
 diffXSetter = 0;
 diffYSetter = 0;
+hitx = 0;
+hity = 0;
 }
 
 board::~board()
@@ -122,6 +127,8 @@ cout << "There are 3 distinct ships out at sea. They are: ";
 cout << setfill(' ') << setw(10) << ' ' << setfill('*') << setw(4) << ' ' << endl;
 cout << setw(3) << '*' << ' ' << setw(69) << setfill(' ') << ' ' << setfill('*') << ' ' << setw(3) << '*' << endl;
 
+usleep(1000);
+
 cout << setw(3) << '*' << ' '<< setfill(' ') << setw(30) << ' ';
 cout << "Submarine ";
 cout << setfill(' ') << setw(30) << ' ' << setfill('*') << setw(4) << ' ' << endl;
@@ -135,6 +142,7 @@ cout << " the submarine is stealthy and lethal.";
 cout << setfill(' ') << setw(6) << ' ' << setfill('*') << setw(4) << ' ' << endl;
 cout << setw(3) << '*' << ' ' << setw(69) << setfill(' ') << ' ' << setfill('*') << ' ' << setw(3) << '*' << endl;
 
+usleep(1000);
 
 cout << setw(3) << '*' << ' '<< setfill(' ') << setw(30) << ' ';
 cout << "Destroyer ";
@@ -147,6 +155,8 @@ cout << setw(3) << '*' << ' '<< setfill(' ') << setw(12) << ' ';
 cout << "Beware of the destoyer's mighty firepower. ";
 cout << setfill(' ') << setw(15) << ' ' << setfill('*') << setw(4) << ' ' << endl;
 cout << setw(3) << '*' << ' ' << setw(69) << setfill(' ') << ' ' << setfill('*') << ' ' << setw(3) << '*' << endl;
+
+usleep(1000);
 
 cout << setw(3) << '*' << ' '<< setfill(' ') << setw(31) << ' ';
 cout << "Carrier ";
@@ -162,6 +172,8 @@ cout << setw(3) << '*' << ' '<< setfill(' ') << setw(15) << ' ';
 cout << "Therefore, if shouldn't be hard to spot!";
 cout << setfill(' ') << setw(15) << ' ' << setfill('*') << setw(4) << ' ' << endl;
 cout << setw(3) << '*' << ' ' << setw(69) << setfill(' ') << ' ' << setfill('*') << ' ' << setw(3) << '*' << endl;
+
+usleep(1000);
 
 cout << setw(77) <<  '*' << endl;
 cout << setw(3) << '*' << ' ' << setw(69) << setfill(' ') << ' ' << setfill('*') << ' ' << setw(3) << '*' << endl;
@@ -181,6 +193,8 @@ cout << setw(3) << '*' << ' ' << setw(69) << setfill(' ') << ' ' << setfill('*')
 cout << setw(3) << '*' << ' '<< setfill('*') << setw(25) << ' ';
 cout << "Good Luck, Captain! "; 
 cout << setfill('*') << setw(25) << ' ' << setfill('*') << setw(4) << ' ' << endl << endl;
+
+usleep(1000);
 }
 
 bool board::placeship(int x, int y, int dir, int size,int lvl,char t)
@@ -264,28 +278,63 @@ void board::checkhit(char x, int y)
      dolinkedlist();
 }
 
-int board::returnammo()
-{ 
-return ammo;     
+
+
+void board::setCoords(char x, int y){
+  hitx = x;
+  hity = y;
+
+  if(static_cast<int>(hitx-64) <= 32 + diffXSetter && hity <= diffYSetter ){
+    if(checklinkedlist()){
+      checkhit(hitx,hity);
+    } else {
+      cout << "Why do you insist on wasting precious ammo on targets we've hit?" << endl;
+    }
+  } else {
+    cout << "Your line-of-sight is off, Captain. Don't let us relieve you of your duties." << endl;
+  }
+
 }
 
-int board::returnhits()
+istream& getline (istream& obj, board& xxx)
 {
-return hit;
-}
 
-int board::returnmiss()
-{
-return miss;
+  getline(obj, xxx.hitstr);
+  cout <<  xxx.hitstr << endl;
+  
+  for(int i = 0; i < xxx.hitstr.length(); i++){
+    if(xxx.hitstr[i] == ' ') {
+      xxx.hitstr.erase(i,1);
+    }
+  }
+
+  if(xxx.hitstr.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890") > 0){
+    stringstream yy(xxx.hitstr.substr(1));
+    int y = 0; 
+    yy >> y; 
+    xxx.setCoords(xxx.hitstr[0], y);
+
+  } else {
+    cout << "Captain, it doesn't work that way. Read the rules. ";
+  }
+    
+  return obj;
 }
 
 istream& operator>>(istream& obj, board& xxx)
 {
-       obj >> xxx.hitx >> xxx.hity;
-       
-       xxx.checkhit(xxx.hitx,xxx.hity);
-       
-       return obj;
+  obj >> xxx.hitx >> xxx.hity;
+
+      if(static_cast<int>(xxx.hitx-64) <= 32 + xxx.diffXSetter && xxx.hity <= xxx.diffYSetter ){
+        if(xxx.checklinkedlist()){
+          xxx.checkhit(xxx.hitx,xxx.hity);
+        } else {
+          cout << "Why do you insist on wasting precious ammo on targets we've hit?" << endl;
+        }
+      } else {
+        cout << "Your line-of-sight is off, Captain. Don't let us relieve you of your duties." << endl;
+      }
+      return obj;
 }
 
 ostream& operator<<(ostream& obj, const board& xxx)
@@ -339,6 +388,7 @@ void board::dolinkedlist()
      {
          last->link = newnode;
          last = newnode;
+         //cout << last->link << endl;
      }  
 }
 
@@ -347,7 +397,6 @@ void board::printlinkedlist()
  nodeType *current;
  
  current = first;
- 
  while (current != NULL)
 {   
  switch(current->hom)
@@ -361,6 +410,18 @@ void board::printlinkedlist()
  }
     current = current->link;
 }
+}
+bool board::checklinkedlist(){
+  nodeType *current;
+  current = first;
+  //cout << hitx << endl;
+  while (current != NULL) {
+    if(current->x == toupper(hitx) && current->y == hity){
+      return false;
+    }
+    current = current->link;
+  }
+  return true;
 }
 
 void board::setfirst()
@@ -378,4 +439,24 @@ void board::setmunitions()
 ammo = 20;
 hit = 0;
 miss=0; 
+}
+
+int board::returnammo()
+{ 
+return ammo;     
+}
+
+int board::returnhits()
+{
+return hit;
+}
+
+int board::returnmiss()
+{
+return miss;
+}
+
+int board::returnhity()
+{
+return hity;
 }

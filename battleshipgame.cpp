@@ -1,5 +1,7 @@
 #include <iostream>
 #include <iomanip>
+#include <unistd.h>
+#include <cstdlib> 
 #include "battleshipgame.h"
 
 using namespace std;
@@ -29,6 +31,7 @@ void battleshipGame::introduction() const
      cout << setw(3) << '*' << ' ' << setw(69) << setfill(' ') << ' ' << setfill('*') << ' ' << setw(3) << '*' << endl;
      cout << setw(77) <<  '*' << endl;
      cout << setw(3) << '*' << ' ' << setw(69) << setfill(' ') << ' ' << setfill('*') << ' ' << setw(3) << '*' << endl;
+     sleep(1);
      theBoard.intro();
 }
 
@@ -95,6 +98,18 @@ void battleshipGame::theConsole()
      hits = theBoard.returnhits();
      ammo = theBoard.returnammo();
      theBoard.theConsole();
+}
+
+istream& getline(istream& obj, battleshipGame& thisclass)
+{
+    cout << "1" << endl;
+    getline(obj, thisclass.theBoard);
+    cout << "2" << endl;
+    thisclass.hity = thisclass.theBoard.returnhity();
+
+    cout << "3" << endl;
+    cout << thisclass.hity << endl;
+    return obj;
 }
 
 istream& operator>>(istream& obj, battleshipGame& thisclass)

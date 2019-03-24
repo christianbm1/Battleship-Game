@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <cctype>
 #include <string>
+#include <unistd.h>
+#include <cstdlib> 
 #include "battleshipgame.h"
 
 using namespace std;
@@ -19,11 +21,13 @@ int main()
   battleshipGame abjects;
   // call member function intro for the intro
   abjects.introduction();
-    
+  sleep(1);
   do {
     //show difficulty levels
     abjects.difficulty();
     cin >> diffic;
+    cin.clear();
+    cin.ignore();
 
     if (diffic <= 3 || diffic > 0) {    
       //set difficulty level           
@@ -34,14 +38,23 @@ int main()
     }
     //check ammo and hits, if so end game.
     while(abjects.ammo > 0 && abjects.hits < 12) {
-      cout << endl << "Insert your hit. Letter first (column), and then the number (row) " << endl;
-      cin>> abjects;
-      cout <<" Previous shots: " <<endl;
-      //linkedlist
-      abjects.thelist();
-      //show the ammo left and hits gotten
-      abjects.theConsole();
-      cout << abjects << endl;
+      cout << endl << "Insert your hit. Letter first (column), and then the number (row) WITHOUT A SPACE for double digits " << endl;
+      //cin>> abjects;
+      cin.clear();
+      //cin.ignore();
+      getline(cin, abjects);
+
+      cout << abjects.hity << endl;
+      if(abjects.hity > 0 ) {
+        cout <<" Previous shots: " <<endl;
+        //linkedlist
+        abjects.thelist();
+        //show the ammo left and hits gotten
+        abjects.theConsole();
+        cout << abjects << endl;
+      } else {
+        cout << "Try again, please" << endl;
+      }
     }
     cout <<endl;
     cout << setfill(' ') << setw(25) << "Game is Finished" << endl;
